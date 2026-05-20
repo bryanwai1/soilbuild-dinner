@@ -1,6 +1,16 @@
 import { useState, useEffect, useRef } from "react";
 import * as XLSX from "xlsx";
+import { createClient } from "@supabase/supabase-js"; // Add this line
 
+// Initialize the Supabase Client with Vite Global Variables
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+// ─── THEME ───────────────────────────────────────────────────────────────────
+const T = {
+  green: "#2D8B3E",
+// ... leave your style configuration exactly as is
 // ─── THEME ───────────────────────────────────────────────────────────────────
 const T = {
   green: "#2D8B3E",
@@ -84,24 +94,10 @@ function SoilbuildLogo({ size = 60, showText = true, vertical = false, dark = fa
 }
 
 // ─── INITIAL DATA ─────────────────────────────────────────────────────────────
-const INIT_EMPLOYEES = [
-  { id: "e1",  name: "Ahmad Bin Hassan",             employeeNumber: "SB001", email: "", pax: 2, drawEligible: true, tableId: null, rsvpStatus: "pending" },
-  { id: "e2",  name: "Siti Nurhaliza Binte Azman",   employeeNumber: "SB002", email: "", pax: 1, drawEligible: true, tableId: null, rsvpStatus: "pending" },
-  { id: "e3",  name: "Raj Kumar Suppiah",             employeeNumber: "SB003", email: "", pax: 2, drawEligible: true, tableId: null, rsvpStatus: "pending" },
-  { id: "e4",  name: "Wong Wei Liang",                employeeNumber: "SB004", email: "", pax: 1, drawEligible: true, tableId: null, rsvpStatus: "pending" },
-  { id: "e5",  name: "Priya Sundaram",                employeeNumber: "SB005", email: "", pax: 2, drawEligible: true, tableId: null, rsvpStatus: "pending" },
-  { id: "e6",  name: "Tan Ah Kow",                   employeeNumber: "SB006", email: "", pax: 1, drawEligible: true, tableId: null, rsvpStatus: "pending" },
-  { id: "e7",  name: "Nurul Ain Binte Ali",           employeeNumber: "SB007", email: "", pax: 2, drawEligible: true, tableId: null, rsvpStatus: "pending" },
-  { id: "e8",  name: "David Lim Chin Huat",           employeeNumber: "SB008", email: "", pax: 1, drawEligible: true, tableId: null, rsvpStatus: "pending" },
-  { id: "e9",  name: "Sarah Chen Mei Ling",           employeeNumber: "SB009", email: "", pax: 2, drawEligible: true, tableId: null, rsvpStatus: "pending" },
-  { id: "e10", name: "Mohammed Faizal Bin Ismail",    employeeNumber: "SB010", email: "", pax: 1, drawEligible: true, tableId: null, rsvpStatus: "pending" },
-  { id: "e11", name: "Lee Boon Heng",                 employeeNumber: "SB011", email: "", pax: 2, drawEligible: true, tableId: null, rsvpStatus: "pending" },
-  { id: "e12", name: "Kavitha Nair",                  employeeNumber: "SB012", email: "", pax: 1, drawEligible: true, tableId: null, rsvpStatus: "pending" },
-  { id: "e13", name: "Zainudin Bin Nordin",           employeeNumber: "SB013", email: "", pax: 2, drawEligible: true, tableId: null, rsvpStatus: "pending" },
-  { id: "e14", name: "Grace Loh Pei Shan",            employeeNumber: "SB014", email: "", pax: 1, drawEligible: true, tableId: null, rsvpStatus: "pending" },
-  { id: "e15", name: "Suresh Pillai",                 employeeNumber: "SB015", email: "", pax: 2, drawEligible: true, tableId: null, rsvpStatus: "pending" },
-];
 
+// ─── STAGE PRESENTATION SCREEN & DRAWING MECHANISMS ──────────────────────────
+
+// Move these initial configuration structures outside the App so they are ready to load
 const INIT_TABLES = [
   { id: "t1", name: "Table 1", capacity: 10, assignedCount: 0 },
   { id: "t2", name: "Table 2", capacity: 10, assignedCount: 0 },
@@ -126,6 +122,49 @@ const INIT_EVENT = {
   emailSubject: "RSVP Confirmed - Soilbuild Annual Dinner 2026",
   emailBody: "Dear {{name}},\n\nThank you for confirming your attendance at the Soilbuild {{title}} {{year}}.\n\nYour invitation card is below. Please present it at the entrance on the night.\n\nEvent Details:\n  Date: {{date}}\n  Time: {{time}}\n  Venue: {{venue}}\n  Dress Code: {{dressCode}}\n  Table: {{table}}\n  Pax: {{pax}}\n\nWe look forward to celebrating with you!\n\nWarm regards,\nSoilbuild Group Holdings Ltd.",
 };
+
+export default function App() {
+  const [page, setPage] = useState("home");
+  const [employees, setEmployees] = useState([]);
+
+  // Your excellent Supabase synchronizer hook:
+  useEffect(() => {
+    const syncDatabaseRows = async () => {
+      const { data, error } = await supabase
+        .from("employees")
+        .select("*")
+        .order("name", { ascending: true });
+
+      if (!error && data) {
+        const mappedData = data.map(emp => ({
+          id: emp.id,
+          name: emp.name,
+          employeeNumber: emp.staff_id,
+          department: emp.department,
+          rsvpStatus: emp.rsvp ? emp.rsvp.toLowerCase() : 'pending',
+          dietaryRequirements: emp.diet,
+          luckyNumber: emp.lucky_number,
+          drawEligible: (emp.lucky_number && emp.rsvp === 'Attending') ? true : false
+        }));
+        setEmployees(mappedData);
+      }
+    };
+    syncDatabaseRows();
+  }, [page]);
+
+  // Now these states will find their initial configurations perfectly!
+  const [tables, setTables] = useState(INIT_TABLES);
+  const [prizes, setPrizes] = useState(INIT_PRIZES);
+  const [eventInfo, setEventInfo] = useState(INIT_EVENT);
+
+ // ... all your existing JSX code inside the App component return statement goes here ...
+  
+  return (
+    <div>
+      {/* Your massive page rendering layout conditional elements */}
+    </div>
+  );
+} // <--- MAKE SURE THIS EXACT CLOSING BRACE IS HERE to close export default function App()
 
 // ─── HELPERS ─────────────────────────────────────────────────────────────────
 const uid = () => Math.random().toString(36).slice(2, 10);
@@ -481,14 +520,48 @@ function RSVPPage({ employees, setEmployees, tables, setTables, eventInfo }) {
     avail.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
     const tbl = avail[0];
 
+    // ─── 1. FETCH CLAIMED LUCKY NUMBERS & COMPUTE A UNIQUE ONE ────────────────
+    const { data: records } = await supabase.from("employees").select("lucky_number");
+    const activeNumbers = records ? records.map(e => e.lucky_number).filter(Boolean) : [];
+    
+    let assignedNum = selected.luckyNumber || "";
+    if (!assignedNum) {
+      let nextNum = 1;
+      while (true) {
+        let padStr = String(nextNum).padStart(3, "0");
+        if (!activeNumbers.includes(padStr)) {
+          assignedNum = padStr;
+          break;
+        }
+        nextNum++;
+      }
+    }
+
+    // ─── 2. UPDATE LIVE SUPABASE ROW FOR 'ATTENDING' ──────────────────────────
+    const { error: dbError } = await supabase
+      .from("employees")
+      .update({
+        rsvp: "Attending", // Maps to your schema default text value format
+        diet: "None",       // Set diet default or add state variable if you collect food types later
+        lucky_number: assignedNum,
+        rsvp_time: new Date().toISOString()
+      })
+      .eq("id", selected.id);
+
+    if (dbError) {
+      alert("Database failed to save RSVP: " + dbError.message);
+      return;
+    }
+
+    // Update your local state so the screen renders updates automatically
     const updated = employees.map(e =>
-      e.id === selected.id ? { ...e, rsvpStatus: "confirmed", tableId: tbl.id, pax, email } : e
+      e.id === selected.id ? { ...e, rsvpStatus: "confirmed", luckyNumber: assignedNum, tableId: tbl.id, pax, email } : e
     );
     const updTables = tables.map(t => t.id === tbl.id ? { ...t, assignedCount: t.assignedCount + pax } : t);
     setEmployees(updated);
     setTables(updTables);
 
-    const confirmedData = { ...selected, rsvpStatus: "confirmed", tableId: tbl.id, tableName: tbl.name, pax, email };
+    const confirmedData = { ...selected, rsvpStatus: "confirmed", luckyNumber: assignedNum, tableId: tbl.id, tableName: tbl.name, pax, email };
     setConfirmed(confirmedData);
 
     // Simulate sending email
@@ -509,11 +582,27 @@ function RSVPPage({ employees, setEmployees, tables, setTables, eventInfo }) {
     }
   };
 
-  const handleDecline = () => {
-    const updated = employees.map(e => e.id === selected.id ? { ...e, rsvpStatus: "declined", email } : e);
+  const handleDecline = async () => {
+    // ─── 3. UPDATE LIVE SUPABASE ROW FOR 'DECLINED' ───────────────────────────
+    const { error: dbError } = await supabase
+      .from("employees")
+      .update({
+        rsvp: "Declined",
+        diet: "None",
+        lucky_number: null, // Wipe out number assignments if they say no
+        rsvp_time: new Date().toISOString()
+      })
+      .eq("id", selected.id);
+
+    if (dbError) {
+      alert("Database failed to save decline: " + dbError.message);
+      return;
+    }
+
+    const updated = employees.map(e => e.id === selected.id ? { ...e, rsvpStatus: "declined", luckyNumber: null, email } : e);
     setEmployees(updated);
-    setConfirmed({ ...selected, rsvpStatus: "declined", email });
-  };
+    setConfirmed({ ...selected, rsvpStatus: "declined", luckyNumber: null, email });
+  }; // Remember to keep the closing bracket of the function component block below this!
 
   // ─── CONFIRMED CARD ───────────────────────────────────────────────────────
   if (confirmed && confirmed.rsvpStatus === "confirmed") {
