@@ -93,11 +93,19 @@ function SoilbuildLogo({ size = 60, showText = true, vertical = false, dark = fa
   );
 }
 
+// ─── IMPORTS & DATABASE INITIALIZATION ────────────────────────────────────────
+import { useState, useEffect } from "react"; 
+import { createClient } from "@supabase/supabase-js";
+
+// This pulls the secret keys safely from the Vercel Environment Variables you saved!
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+// This creates the 'supabase' object your code uses below
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+
 // ─── INITIAL DATA ─────────────────────────────────────────────────────────────
-
-// ─── STAGE PRESENTATION SCREEN & DRAWING MECHANISMS ──────────────────────────
-
-// Move these initial configuration structures outside the App so they are ready to load
 const INIT_TABLES = [
   { id: "t1", name: "Table 1", capacity: 10, assignedCount: 0 },
   { id: "t2", name: "Table 2", capacity: 10, assignedCount: 0 },
@@ -123,6 +131,8 @@ const INIT_EVENT = {
   emailBody: "Dear {{name}},\n\nThank you for confirming your attendance at the Soilbuild {{title}} {{year}}.\n\nYour invitation card is below. Please present it at the entrance on the night.\n\nEvent Details:\n  Date: {{date}}\n  Time: {{time}}\n  Venue: {{venue}}\n  Dress Code: {{dressCode}}\n  Table: {{table}}\n  Pax: {{pax}}\n\nWe look forward to celebrating with you!\n\nWarm regards,\nSoilbuild Group Holdings Ltd.",
 };
 
+
+// ─── STAGE PRESENTATION SCREEN & DRAWING MECHANISMS ──────────────────────────
 export default function App() {
   const [page, setPage] = useState("home");
   const [employees, setEmployees] = useState([]);
@@ -157,15 +167,8 @@ export default function App() {
   const [prizes, setPrizes] = useState(INIT_PRIZES);
   const [eventInfo, setEventInfo] = useState(INIT_EVENT);
 
- // ... all your existing JSX code inside the App component return statement goes here ...
+  // ... leave your massive return () JSX layout below here completely untouched ...
   
-  return (
-    <div>
-      {/* Your massive page rendering layout conditional elements */}
-    </div>
-  );
-} // <--- MAKE SURE THIS EXACT CLOSING BRACE IS HERE to close export default function App()
-
 // ─── HELPERS ─────────────────────────────────────────────────────────────────
 const uid = () => Math.random().toString(36).slice(2, 10);
 const nowTime = () => new Date().toLocaleTimeString();
