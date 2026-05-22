@@ -10,10 +10,6 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 // ─── THEME ───────────────────────────────────────────────────────────────────
 const T = {
   green: "#2D8B3E",
-// ... leave your style configuration exactly as is
-// ─── THEME ───────────────────────────────────────────────────────────────────
-const T = {
-  green: "#2D8B3E",
   greenDark: "#1A5C28",
   greenLight: "#4CAF50",
   yellow: "#F5C518",
