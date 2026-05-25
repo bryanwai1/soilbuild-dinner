@@ -1,12 +1,7 @@
 import { useState, useEffect } from "react";
 import * as XLSX from "xlsx";
 
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
-const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
-
-const T = { green: "#2D8B3E", white: "#FFFFFF", red: "#C1272D", gray: "#6B7280", border: "#E5E7EB", beige: "#F5F0E8", beigeLight: "#FAF7F2", beigeDark: "#E8DFD0", inkDark: "#2C1A0E", inkMid: "#5C3D1E" };
-
-function SoilbuildLogo({ size = 60 }) { return <div style={{ fontSize: size }}>🌱 SOILBUILD</div>; }
+const T = { green: "#2D8B3E", white: "#FFFFFF", red: "#C1272D", gray: "#6B7280", border: "#E5E7EB", beige: "#F5F0E8", beigeDark: "#E8DFD0", inkDark: "#2C1A0E", inkMid: "#5C3D1E" };
 
 const INIT_EMPLOYEES = [
   { id: "e1", name: "Ahmad Bin Hassan", employeeNumber: "SB001", pax: 2, rsvpStatus: "pending", tableId: null },
@@ -41,14 +36,10 @@ const INIT_PRIZES = [
 function HomePage({ setPage }) {
   return (
     <div style={{ minHeight: "100vh", background: "#F5F0E8", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "40px" }}>
-      <SoilbuildLogo size={60} />
-      <h1 style={{ fontSize: 48, fontWeight: 900, color: T.inkDark, marginTop: 20, marginBottom: 10 }}>Soilbuild</h1>
+      <h1 style={{ fontSize: 48, fontWeight: 900, color: T.inkDark, marginBottom: 10 }}>Soilbuild</h1>
       <p style={{ fontSize: 32, color: T.green, marginBottom: 30 }}>Annual Dinner 2026</p>
       <p style={{ fontSize: 16, color: T.gray, marginBottom: 40, maxWidth: 500, textAlign: "center" }}>Saturday, 15 March 2026 | 6:00 PM | Grand Ballroom</p>
-      <div style={{ display: "flex", gap: 16 }}>
-        <button onClick={() => setPage("rsvp")} style={{ background: T.green, color: T.white, border: "none", borderRadius: 10, padding: "12px 24px", fontWeight: 600, cursor: "pointer" }}>RSVP Now</button>
-        <button onClick={() => setPage("admin")} style={{ background: T.white, color: T.green, border: `2px solid ${T.green}`, borderRadius: 10, padding: "12px 24px", fontWeight: 600, cursor: "pointer" }}>Admin</button>
-      </div>
+      <button onClick={() => setPage("rsvp")} style={{ background: T.green, color: T.white, border: "none", borderRadius: 10, padding: "12px 24px", fontWeight: 600, cursor: "pointer" }}>RSVP Now</button>
     </div>
   );
 }
@@ -88,9 +79,7 @@ function RSVPPage({ employees, setEmployees, tables, setTables }) {
         </div>
         {selected && (
           <>
-            <div style={{ marginBottom: 16 }}>
-              <label style={{ fontSize: 13, color: T.inkMid, marginBottom: 6, fontWeight: 500 }}>Employee: {selected.employeeNumber}</label>
-            </div>
+            <p style={{ marginBottom: 16, color: T.gray }}>Employee: {selected.employeeNumber}</p>
             <div style={{ display: "flex", gap: 12 }}>
               <button onClick={handleConfirm} style={{ flex: 1, background: T.green, color: T.white, border: "none", borderRadius: 8, padding: "12px", fontWeight: 600, cursor: "pointer" }}>Confirm</button>
               <button onClick={() => { setSelected(null); setQuery(""); }} style={{ flex: 1, background: T.white, color: T.red, border: `2px solid ${T.red}`, borderRadius: 8, padding: "12px", fontWeight: 600, cursor: "pointer" }}>Decline</button>
@@ -119,12 +108,8 @@ function AdminLogin({ onLogin }) {
       <div style={{ background: "#FAF7F2", borderRadius: 16, padding: 40, width: 400 }}>
         <h1 style={{ fontSize: 24, color: T.inkDark, marginBottom: 20, textAlign: "center" }}>Admin Login</h1>
         {err && <div style={{ background: "#FEE2E2", color: T.red, padding: "10px", borderRadius: 6, marginBottom: 16 }}>{err}</div>}
-        <div style={{ marginBottom: 12 }}>
-          <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="admin@soilbuild.com" style={{ width: "100%", padding: "10px", borderRadius: 6, border: `1px solid ${T.border}` }} />
-        </div>
-        <div style={{ marginBottom: 16 }}>
-          <input type="password" value={pass} onChange={e => setPass(e.target.value)} placeholder="Password" style={{ width: "100%", padding: "10px", borderRadius: 6, border: `1px solid ${T.border}` }} />
-        </div>
+        <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="admin@soilbuild.com" style={{ width: "100%", padding: "10px", borderRadius: 6, border: `1px solid ${T.border}`, marginBottom: 12 }} />
+        <input type="password" value={pass} onChange={e => setPass(e.target.value)} placeholder="Password" style={{ width: "100%", padding: "10px", borderRadius: 6, border: `1px solid ${T.border}`, marginBottom: 16 }} />
         <button onClick={handle} style={{ width: "100%", background: T.green, color: T.white, border: "none", borderRadius: 6, padding: 10, fontWeight: 600, cursor: "pointer" }}>Sign In</button>
       </div>
     </div>
